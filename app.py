@@ -61,7 +61,7 @@ def ekstrak_bagian_dengan_nlp(dokumen):
     current_list_kesimpulan = []
     current_list_referensi = []
 
-    # Penjelasan: Fungsi ini digunakan untuk mengatur ulang semua flags menjadi False
+    #Mengatur ulang semua flags menjadi False
     def reset_flags(flags):
         for key in flags:
             flags[key] = False
@@ -71,14 +71,13 @@ def ekstrak_bagian_dengan_nlp(dokumen):
         if not text:
             continue
 
-        # Baris ini digunakan untuk mengabaikan bagian yang tidak perlu diambil
+        #Mengabaikan bagian yang tidak perlu diambil
         if any(keyword in text for keyword in ["Keywords", "Keyword", "Kata Kunci", "UCAPAN TERIMA KASIH", "BAB"]):
             reset_flags(section_flags)
             current_section = None
             continue
 
-        # Penjelasan: Bagian ini digunakan untuk menentukan bagian yang sedang diambil
-        # berdasarkan kata kunci yang ada di dokumen
+        #Menentukan bagian yang sedang diambil berdasarkan kata kunci yang ada di dokumen
         if "ABSTRACT" in text:
             current_section = "Abstract"
             reset_flags(section_flags)
@@ -110,8 +109,8 @@ def ekstrak_bagian_dengan_nlp(dokumen):
         elif para.style.name.startswith("Heading"):
             continue
         else:
-            # Penjelasan: Jika bagian yang sedang diambil adalah bagian yang memiliki list,
-            # maka list tersebut akan diambil sebagai satu item dalam list
+            #Jika bagian yang sedang diambil adalah bagian yang memiliki list,
+            #maka list tersebut akan diambil sebagai satu item dalam list
             if section_flags["dalam_pendahuluan"]:
                 if para.style.name.startswith("List"):
                     current_list_pendahuluan.append(text)
@@ -178,7 +177,7 @@ def ekstrak_bagian_dengan_nlp(dokumen):
 
     return bagian
 
-# Penjelasan: Fungsi ini digunakan untuk mengganti bagian yang ada di template dan menyesuaikan dengan format jurnal
+#Mengganti bagian yang ada di template dan menyesuaikan dengan format jurnal
 def sesuaikan_dengan_template(dokumen_template, bagian):
     for para in dokumen_template.paragraphs:
         # Penjelasan: Bagian ini digunakan untuk mengganti bagian yang ada di template sesuai dengan bagian yang ada di dokumen
