@@ -57,7 +57,7 @@ def ekstrak_bagian_dengan_nlp(dokumen):
         if not text:
             continue
 
-        if any(keyword in text for keyword in ["Keywords", "Keyword", "Kata Kunci", "UCAPAN TERIMA KASIH", "BAB"]):
+        if any(keyword in text for keyword in ["Keywords", "Keyword", "Kata Kunci", "UCAPAN TERIMA KASIH", "BAB", "LAMPIRAN"]):
             reset_flags(section_flags)
             current_section = None
             continue
@@ -86,7 +86,7 @@ def ekstrak_bagian_dengan_nlp(dokumen):
             current_section = "Kesimpulan"
             reset_flags(section_flags)
             section_flags["dalam_kesimpulan"] = True
-        elif "REFERENSI" in text or "DAFTAR PUSTAKA" in text:
+        elif "DAFTAR PUSTAKA" in text or "REFERENSI" in text:
             current_section = "Referensi"
             reset_flags(section_flags)
             section_flags["dalam_referensi"] = True
@@ -178,6 +178,9 @@ def sesuaikan_dengan_template(dokumen_template, bagian):
                 run.font.name = 'Arial'
                 run.italic = True
                 p.alignment = WD_PARAGRAPH_ALIGNMENT.JUSTIFY
+                p.paragraph_format.space_before = Pt(3)
+                p.paragraph_format.space_after = Pt(3)
+                p.paragraph_format.line_spacing = 1.15
                 p.paragraph_format.first_line_indent = Inches(0.5)
 
         elif "AA2" in para.text:
@@ -187,6 +190,9 @@ def sesuaikan_dengan_template(dokumen_template, bagian):
                 p.style.font.size = Pt(10)
                 p.style.font.name = 'Arial'
                 p.alignment = WD_PARAGRAPH_ALIGNMENT.JUSTIFY
+                p.paragraph_format.space_before = Pt(3)
+                p.paragraph_format.space_after = Pt(3)
+                p.paragraph_format.line_spacing = 1.15
                 p.paragraph_format.first_line_indent = Inches(0.5)
         
         elif "AA3" in para.text:
@@ -199,12 +205,18 @@ def sesuaikan_dengan_template(dokumen_template, bagian):
                         p1.style.font.name = 'Arial'
                         p1.paragraph_format.left_indent = Inches(0.5)
                         p1.paragraph_format.first_line_indent = Inches(-0.15)
+                        p1.paragraph_format.space_before = Pt(3)
+                        p1.paragraph_format.space_after = Pt(3)
+                        p1.paragraph_format.line_spacing = 1.15
                         p1.alignment = WD_PARAGRAPH_ALIGNMENT.LEFT
                 else:
                     p1 = para.insert_paragraph_before(item_pendahuluan)
                     p1.style.font.size = Pt(10)
                     p1.style.font.name = 'Arial'
                     p1.alignment = WD_PARAGRAPH_ALIGNMENT.JUSTIFY
+                    p1.paragraph_format.space_before = Pt(3)
+                    p1.paragraph_format.space_after = Pt(3)
+                    p1.paragraph_format.line_spacing = 1.15
                     p1.paragraph_format.first_line_indent = Inches(0.5)
 
         elif "AA4" in para.text:
@@ -217,12 +229,18 @@ def sesuaikan_dengan_template(dokumen_template, bagian):
                         p2.style.font.name = 'Arial'
                         p2.paragraph_format.left_indent = Inches(0.5)
                         p2.paragraph_format.first_line_indent = Inches(-0.15)
+                        p2.paragraph_format.space_before = Pt(3)
+                        p2.paragraph_format.space_after = Pt(3)
+                        p2.paragraph_format.line_spacing = 1.15
                         p2.alignment = WD_PARAGRAPH_ALIGNMENT.LEFT
                 else:
                     p2 = para.insert_paragraph_before(item_metode_penelitian)
                     p2.style.font.size = Pt(10)
                     p2.style.font.name = 'Arial'
                     p2.alignment = WD_PARAGRAPH_ALIGNMENT.JUSTIFY
+                    p2.paragraph_format.space_before = Pt(3)
+                    p2.paragraph_format.space_after = Pt(3)
+                    p2.paragraph_format.line_spacing = 1.15
                     p2.paragraph_format.first_line_indent = Inches(0.5)
 
         elif "AA5" in para.text:
@@ -235,12 +253,18 @@ def sesuaikan_dengan_template(dokumen_template, bagian):
                         p3.style.font.name = 'Arial'
                         p3.paragraph_format.left_indent = Inches(0.5)
                         p3.paragraph_format.first_line_indent = Inches(-0.15)
+                        p3.paragraph_format.space_before = Pt(3)
+                        p3.paragraph_format.space_after = Pt(3)
+                        p3.paragraph_format.line_spacing = 1.15
                         p3.alignment = WD_PARAGRAPH_ALIGNMENT.LEFT
                 else:
                     p3 = para.insert_paragraph_before(item_hasil)
                     p3.style.font.size = Pt(10)
                     p3.style.font.name = 'Arial'
                     p3.alignment = WD_PARAGRAPH_ALIGNMENT.JUSTIFY
+                    p3.paragraph_format.space_before = Pt(3)
+                    p3.paragraph_format.space_after = Pt(3)
+                    p3.paragraph_format.line_spacing = 1.15
                     p3.paragraph_format.first_line_indent = Inches(0.5)
 
         elif "AA6" in para.text:
@@ -253,12 +277,18 @@ def sesuaikan_dengan_template(dokumen_template, bagian):
                         p4.style.font.name = 'Arial'
                         p4.paragraph_format.left_indent = Inches(0.5)
                         p4.paragraph_format.first_line_indent = Inches(-0.15)
+                        p4.paragraph_format.space_before = Pt(3)
+                        p4.paragraph_format.space_after = Pt(3)
+                        p4.paragraph_format.line_spacing = 1.15
                         p4.alignment = WD_PARAGRAPH_ALIGNMENT.LEFT
                 else:
                     p5 = para.insert_paragraph_before(item_kesimpulan)
                     p5.style.font.size = Pt(10)
                     p5.style.font.name = 'Arial'
                     p5.alignment = WD_PARAGRAPH_ALIGNMENT.JUSTIFY
+                    p5.paragraph_format.space_before = Pt(3)
+                    p5.paragraph_format.space_after = Pt(3)
+                    p5.paragraph_format.line_spacing = 1.15
                     p5.paragraph_format.first_line_indent = Inches(0.5)
 
         elif "AA7" in para.text:
@@ -269,15 +299,23 @@ def sesuaikan_dengan_template(dokumen_template, bagian):
                         p6 = para.insert_paragraph_before(f"{i}. {list_item}")
                         p6.style.font.size = Pt(10)
                         p6.style.font.name = 'Arial'
-                        p6.paragraph_format.left_indent = Inches(0.5)
-                        p6.paragraph_format.first_line_indent = Inches(-0.15)
+                        p6.paragraph_format.left_indent = Inches(0.5) 
+                        p6.paragraph_format.first_line_indent = Inches(-0.5)  
+                        p6.paragraph_format.space_before = Pt(3)  
+                        p6.paragraph_format.space_after = Pt(3)   
+                        p6.paragraph_format.line_spacing = 1.15   
                         p6.alignment = WD_PARAGRAPH_ALIGNMENT.LEFT
                 else:
                     p6 = para.insert_paragraph_before(item_referensi)
                     p6.style.font.size = Pt(10)
                     p6.style.font.name = 'Arial'
+                    p6.paragraph_format.left_indent = Inches(0.5) 
+                    p6.paragraph_format.first_line_indent = Inches(-0.5)  
+                    p6.paragraph_format.space_before = Pt(3)  
+                    p6.paragraph_format.space_after = Pt(3)   
+                    p6.paragraph_format.line_spacing = 1.15
                     p6.alignment = WD_PARAGRAPH_ALIGNMENT.JUSTIFY
-                    p6.paragraph_format.first_line_indent = Inches(0.5)
+
 
         elif "Keyword: Maksimal 5 kata dari jurnal (dipisahkan dengan titik koma)" in para.text:
             para.clear()
@@ -304,7 +342,7 @@ def konversi_skripsi_ke_jurnal(path_skripsi, path_template, path_output):
     sesuaikan_dengan_template(dokumen_template, bagian)
     simpan_dokumen_baru(dokumen_template, path_output)
 
-path_skripsi = "prototype/data/skripsi_test.docx"
+path_skripsi = "prototype/data/skripsi_test_text-biasa.docx"
 path_template = "prototype/template/Template.docx"
 path_output = "prototype/output/skripsi_ke_jurnal.docx"
 
