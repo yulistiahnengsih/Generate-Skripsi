@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Generate Skripsi ke Jurnal</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    />
+    <style>
+      body {
+        background-color: #f4f4f9;
+        color: #333;
+        font-family: Arial, sans-serif;
+      }
+      .navbar {
+        background-color: #007bff;
+      }
+      .navbar-brand,
+      .nav-link {
+        color: #fff !important;
+      }
+      .container {
+        max-width: 60%;
+        margin: 70px auto;
+        padding: 20px;
+        background-color: #fefefe;
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+      }
+      .title {
+        text-align: center;
+        margin-bottom: 30px;
+        background: linear-gradient(45deg, #007bff, #9c9fff);
+        -webkit-background-clip: text;
+        -moz-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-weight: bold;
+      }
+      .upload-area {
+        border: 2px dashed #007bff;
+        border-radius: 5px;
+        padding: 50px;
+        height: 70%;
+        text-align: center;
+        background-color: #f9f9f9;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+      .upload-area:hover {
+        background-color: #e0e0e0;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+      }
+      .upload-area i {
+        font-size: 4em;
+        color: #007bff;
+      }
+      .info-section {
+        padding: 3rem 0;
+        display: flex;
+        gap: 20px;
+      }
+      .info-card {
+        width: 50%;
+      }
+      .card {
+        border: none;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s, box-shadow 0.3s;
+      }
+      .card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+      }
+      .card-body {
+        padding: 20px;
+      }
+      .card-title {
+        font-size: 1.75rem;
+        margin-bottom: 15px;
+      }
+      .card-text {
+        font-size: 1rem;
+        color: #555;
+      }
+      .file-list {
+        margin-top: 20px;
+      }
+      .file-list .file-item {
+        margin-bottom: 10px;
+      }
+      #progressContainer {
+        display: none;
+        margin-top: 20px;
+      }
+      #downloadLink,
+      #refreshButton {
+        display: none;
+        margin-top: 20px;
+      }
+      #downloadLink,
+      #refreshButton {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: background-color 0.3s ease, box-shadow 0.3s ease;
+      }
+      #downloadLink:hover,
+      #refreshButton:hover {
+        background-color: #28a745;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+      }
+      #message {
+        display: none;
+        margin-top: 20px;
+        padding: 10px;
+        border-radius: 5px;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    !-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+      <a class="navbar-brand" href="#">Pengonversi Jurnal</a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbarNav"
+        aria-controls="navbarNav"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('index') }}">Beranda</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Fitur</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Kontak</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <div class="container">
+      <h1 class="title">Generate Jurnal Anda!</h1>
+      <div class="upload-area" id="uploadArea">
+        <i class="fas fa-cloud-upload-alt"></i>
+        <p>
+          Tarik dan lepas file .docx Anda di sini atau klik untuk memilih file
+        </p>
+        <input
+          type="file"
+          id="fileInput"
+          style="display: none"
+          accept=".docx"
+        />
+      </div>
+      <div class="file-list" id="fileList"></div>
+      <div id="progressContainer">
+        <div class="progress">
+          <div
+            id="progressBar"
+            class="progress-bar progress-bar-striped progress-bar-animated"
+            role="progressbar"
+            style="width: 0%"
+            aria-valuenow="0"
+            aria-valuemin="0"
+            aria-valuemax="100"
+          ></div>
+        </div>
+      </div>
+      <a href="#" id="downloadLink" class="btn btn-success" download
+        >Download Jurnal Anda</a
+      >
+      <div id="message"></div>
+      <button
+        id="refreshButton"
+        class="btn btn-primary"
+        onclick="window.location.reload();"
+      >
+        Upload file lain
+      </button>
+
+      <div class="info-section">
+        <!-- Informasi Aplikasi -->
+        <div class="card mt-4 info-card">
+          <div class="card-body">
+            <h2 class="card-title">Apa itu Pengonversi Jurnal?</h2>
+            <p class="card-text">
+              Aplikasi ini membantu Anda mengonversi skripsi Anda ke dalam
+              format jurnal yang sesuai dengan template yang diakui oleh
+              institusi. Anda hanya perlu mengunggah file skripsi dalam format
+              .docx, dan sistem kami akan melakukan sisanya.
+            </p>
+          </div>
+        </div>
+
+        <!-- Proses Backend -->
+        <div class="card mt-4 info-card">
+          <div class="card-body">
+            <h2 class="card-title">Bagaimana Proses Backend Bekerja?</h2>
+            <p class="card-text">
+              Sistem backend kami bekerja dengan membaca format penulisan
+              skripsi yang Anda unggah. Setelah itu, skripsi Anda akan diformat
+              ulang secara otomatis mengikuti template jurnal yang telah
+              ditentukan.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Panduan Penggunaan -->
+      <div class="card mt-4">
+        <div class="card-body">
+          <h2 class="card-title">Panduan Penggunaan</h2>
+          <p class="card-text">
+            1. Klik area upload atau tarik file .docx Anda ke dalam kotak
+            upload.
+          </p>
+          <p class="card-text">
+            2. Tunggu hingga proses konversi selesai dan link download muncul.
+          </p>
+          <p class="card-text">
+            3. Unduh jurnal Anda yang sudah selesai dikonversi.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const uploadArea = document.getElementById("uploadArea");
+      const fileInput = document.getElementById("fileInput");
+      const fileList = document.getElementById("fileList");
+      const downloadLink = document.getElementById("downloadLink");
+      const refreshButton = document.getElementById("refreshButton");
+      const progressBar = document.getElementById("progressBar");
+      const progressContainer = document.getElementById("progressContainer");
+      const message = document.getElementById("message");
+
+      uploadArea.addEventListener("click", () => fileInput.click());
+
+      fileInput.addEventListener("change", (event) => {
+        handleFiles(event.target.files);
+      });
+
+      uploadArea.addEventListener("dragover", (event) => {
+        event.preventDefault();
+        uploadArea.classList.add("active");
+      });
+
+      uploadArea.addEventListener("dragleave", () => {
+        uploadArea.classList.remove("active");
+      });
+
+      uploadArea.addEventListener("drop", (event) => {
+        event.preventDefault();
+        handleFiles(event.dataTransfer.files);
+        uploadArea.classList.remove("active");
+      });
+
+      //   Penjelasan: Fungsi handleFiles() akan menangani file yang diupload oleh pengguna
+      function handleFiles(files) {
+        fileList.innerHTML = "";
+        message.style.display = "none";
+        downloadLink.style.display = "none";
+        refreshButton.style.display = "none";
+
+        if (files.length > 1) {
+          showMessage("Tolong upload hanya 1 file saja", "error");
+          return;
+        }
+        if (
+          files[0].type !==
+          "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        ) {
+          showMessage(
+            "File yang diupload harus berformat .docx (Microsoft Word)",
+            "error"
+          );
+          return;
+        }
+
+        if (files.length > 0) {
+          const formData = new FormData();
+          formData.append("file", files[0]);
+
+          const fileItem = document.createElement("div");
+          fileItem.className = "file-item";
+          fileItem.innerHTML = `<i class="fas fa-file"></i> ${files[0].name}`;
+          fileList.appendChild(fileItem);
+
+          progressBar.style.width = "0%";
+          progressBar.setAttribute("aria-valuenow", 0);
+          progressContainer.style.display = "block";
+
+          uploadFile(formData);
+        }
+      }
+
+      // Penjelasan: Fungsi uploadFile() akan mengirimkan file yang diupload ke server menggunakan XMLHttpRequest
+      function uploadFile(formData) {
+        const xhr = new XMLHttpRequest();
+        xhr.open("POST", "/upload", true);
+
+        xhr.upload.onprogress = function (event) {
+          if (event.lengthComputable) {
+            const percentComplete = (event.loaded / event.total) * 100;
+            progressBar.style.width = percentComplete + "%";
+            progressBar.setAttribute("aria-valuenow", percentComplete);
+          }
+        };
+
+        xhr.onload = function () {
+          progressContainer.style.display = "none";
+          if (xhr.status === 200) {
+            const response = JSON.parse(xhr.responseText);
+            if (response.download_url) {
+              downloadLink.href = response.download_url;
+              downloadLink.style.display = "block";
+              refreshButton.style.display = "block";
+              showMessage(
+                "File berhasil diupload dan diubah menjadi jurnal.",
+                "success"
+              );
+            } else {
+              showMessage(
+                "An error occurred while converting the file.",
+                "error"
+              );
+            }
+          } else {
+            showMessage("An error occurred while uploading the file.", "error");
+          }
+        };
+
+        xhr.onerror = function () {
+          showMessage("An error occurred while uploading the file.", "error");
+        };
+
+        xhr.send(formData);
+      }
+
+      function showMessage(text, type = "success") {
+        message.innerText = text;
+        if (type === "success") {
+          message.style.backgroundColor = "#d4edda";
+          message.style.color = "#155724";
+          message.style.borderColor = "#c3e6cb";
+        } else if (type === "error") {
+          message.style.backgroundColor = "#f8d7da";
+          message.style.color = "#721c24";
+          message.style.borderColor = "#f5c6cb";
+        }
+        message.style.display = "block";
+      }
+    </script>
+  </body>
+</html>

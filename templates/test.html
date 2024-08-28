@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Generate Skripsi ke Jurnal</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    />
+    <style>
+      body {
+        background-color: #f4f4f9;
+        color: #333;
+        font-family: Arial, sans-serif;
+      }
+      .container {
+        max-width: 600px;
+        margin: 50px auto;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+      }
+      .title {
+        text-align: center;
+        margin-bottom: 30px;
+        background: linear-gradient(45deg, #6c63ff, #9c9fff);
+        -webkit-background-clip: text;
+        -moz-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      .upload-area {
+        border: 2px dashed #6c63ff;
+        border-radius: 5px;
+        padding: 50px;
+        text-align: center;
+        background-color: #f9f9f9;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: background-color 0.3s ease, box-shadow 0.3s ease;
+      }
+      .upload-area:hover {
+        background-color: #e0e0e0;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+      }
+      .upload-area i {
+        font-size: 4em;
+        color: #6c63ff;
+      }
+      .file-list {
+        margin-top: 20px;
+      }
+      .file-list .file-item {
+        margin-bottom: 10px;
+      }
+      #progressContainer {
+        display: none;
+        margin-top: 20px;
+      }
+      #downloadLink,
+      #refreshButton {
+        display: none;
+        margin-top: 20px;
+      }
+      #downloadLink,
+      #refreshButton {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: background-color 0.3s ease, box-shadow 0.3s ease;
+      }
+      #downloadLink:hover,
+      #refreshButton:hover {
+        background-color: #28a745;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+      }
+      #message {
+        display: none;
+        margin-top: 20px;
+        padding: 10px;
+        border-radius: 5px;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1 class="title">Generate Skripsi ke Jurnal</h1>
+      <div class="upload-area" id="uploadArea">
+        <i class="fas fa-cloud-upload-alt"></i>
+        <p>
+          Tarik dan lepas file .docx Anda di sini atau klik untuk memilih file
+        </p>
+        <input
+          type="file"
+          id="fileInput"
+          style="display: none"
+          accept=".docx"
+        />
+      </div>
+      <div class="file-list" id="fileList"></div>
+      <div id="progressContainer">
+        <div class="progress">
+          <div
+            id="progressBar"
+            class="progress-bar progress-bar-striped progress-bar-animated"
+            role="progressbar"
+            style="width: 0%"
+            aria-valuenow="0"
+            aria-valuemin="0"
+            aria-valuemax="100"
+          ></div>
+        </div>
+      </div>
+      <a href="#" id="downloadLink" class="btn btn-success" download
+        >Download Jurnal Anda</a
+      >
+      <div id="message"></div>
+      <button
+        id="refreshButton"
+        class="btn btn-primary"
+        onclick="window.location.reload();"
+      >
+        Upload file lain
+      </button>
+    </div>
+
+    <script>
+      const uploadArea = document.getElementById("uploadArea");
+      const fileInput = document.getElementById("fileInput");
+      const fileList = document.getElementById("fileList");
+      const downloadLink = document.getElementById("downloadLink");
+      const refreshButton = document.getElementById("refreshButton");
+      const progressBar = document.getElementById("progressBar");
+      const progressContainer = document.getElementById("progressContainer");
+      const message = document.getElementById("message");
+
+      uploadArea.addEventListener("click", () => fileInput.click());
+
+      fileInput.addEventListener("change", (event) => {
+        handleFiles(event.target.files);
+      });
+
+      uploadArea.addEventListener("dragover", (event) => {
+        event.preventDefault();
+        uploadArea.classList.add("active");
+      });
+
+      uploadArea.addEventListener("dragleave", () => {
+        uploadArea.classList.remove("active");
+      });
+
+      uploadArea.addEventListener("drop", (event) => {
+        event.preventDefault();
+        handleFiles(event.dataTransfer.files);
+        uploadArea.classList.remove("active");
+      });
+
+    //   Penjelasan: Fungsi handleFiles() akan menangani file yang diupload oleh pengguna
+      function handleFiles(files) {
+        fileList.innerHTML = "";
+        message.style.display = "none";
+        downloadLink.style.display = "none";
+        refreshButton.style.display = "none";
+
+        if (files.length > 1) {
+          showMessage("Tolong upload hanya 1 file saja", "error");
+          return;
+        }
+        if (
+          files[0].type !==
+          "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        ) {
+          showMessage(
+            "File yang diupload harus berformat .docx (Microsoft Word)",
+            "error"
+          );
+          return;
+        }
+
+        if (files.length > 0) {
+          const formData = new FormData();
+          formData.append("file", files[0]);
+
+          const fileItem = document.createElement("div");
+          fileItem.className = "file-item";
+          fileItem.innerHTML = `<i class="fas fa-file"></i> ${files[0].name}`;
+          fileList.appendChild(fileItem);
+
+          progressBar.style.width = "0%";
+          progressBar.setAttribute("aria-valuenow", 0);
+          progressContainer.style.display = "block";
+
+          uploadFile(formData);
+        }
+      }
+
+    // Penjelasan: Fungsi uploadFile() akan mengirimkan file yang diupload ke server menggunakan XMLHttpRequest
+      function uploadFile(formData) {
+        const xhr = new XMLHttpRequest();
+        xhr.open("POST", "/upload", true);
+
+        xhr.upload.onprogress = function (event) {
+          if (event.lengthComputable) {
+            const percentComplete = (event.loaded / event.total) * 100;
+            progressBar.style.width = percentComplete + "%";
+            progressBar.setAttribute("aria-valuenow", percentComplete);
+          }
+        };
+
+        xhr.onload = function () {
+          progressContainer.style.display = "none";
+          if (xhr.status === 200) {
+            const response = JSON.parse(xhr.responseText);
+            if (response.download_url) {
+              downloadLink.href = response.download_url;
+              downloadLink.style.display = "block";
+              refreshButton.style.display = "block";
+              showMessage(
+                "File berhasil diupload dan diubah menjadi jurnal.",
+                "success"
+              );
+            } else {
+              showMessage(
+                "An error occurred while converting the file.",
+                "error"
+              );
+            }
+          } else {
+            showMessage("An error occurred while uploading the file.", "error");
+          }
+        };
+
+        xhr.onerror = function () {
+          showMessage("An error occurred while uploading the file.", "error");
+        };
+
+        xhr.send(formData);
+      }
+
+      function showMessage(text, type = "success") {
+        message.innerText = text;
+        if (type === "success") {
+          message.style.backgroundColor = "#d4edda";
+          message.style.color = "#155724";
+          message.style.borderColor = "#c3e6cb";
+        } else if (type === "error") {
+          message.style.backgroundColor = "#f8d7da";
+          message.style.color = "#721c24";
+          message.style.borderColor = "#f5c6cb";
+        }
+        message.style.display = "block";
+      }
+    </script>
+  </body>
+</html>
