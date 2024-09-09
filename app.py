@@ -235,6 +235,7 @@ def ekstrak_bagian(dokumen):
                         bagian["Referensi"].append(current_list_referensi)
                         current_list_referensi = []
                     bagian["Referensi"].append(text)
+
             else:
                 if current_section:
                     bagian[current_section].append(text)
@@ -253,9 +254,9 @@ def ekstrak_bagian(dokumen):
         bagian["Referensi"].append(current_list_referensi)
 
     # Memeriksa apakah ada bagian yang kosong
-    for key, value in bagian.items():
-        if not value:
-            return f"Bagian {key} tidak ditemukan."
+    #for key, value in bagian.items():
+    #    if not value:
+    #        return f"Bagian {key} tidak ditemukan."
 
     return bagian
 
