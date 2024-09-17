@@ -137,7 +137,7 @@ def ekstrak_bagian(dokumen):
     current_list_kesimpulan = []
     current_list_referensi = []
 
-    # Penjelasan: Fungsi ini digunakan untuk mengatur ulang semua flags menjadi False
+    #Fungsi ini digunakan untuk mengatur ulang semua flags menjadi False
     def reset_flags(flags):
         for key in flags:
             flags[key] = False
@@ -147,14 +147,13 @@ def ekstrak_bagian(dokumen):
         if not text:
             continue
 
-        # Baris ini digunakan untuk mengabaikan bagian yang tidak perlu diambil
+        #Bagian ini digunakan untuk mengabaikan bagian yang tidak perlu diambil
         if any(keyword.lower() in text.lower() for keyword in ["keywords", "keyword", "kata kunci", "ucapan terima kasih", "lampiran"]):
             reset_flags(section_flags)
             current_section = None
             continue
 
-        # Penjelasan: Bagian ini digunakan untuk menentukan bagian yang sedang diambil
-        # berdasarkan kata kunci yang ada di dokumen
+        #Bagian ini digunakan untuk menentukan bagian yang sedang diambil berdasarkan kata kunci yang ada di dokumen
         if "ABSTRACT" in text:
             current_section = "Abstract"
             reset_flags(section_flags)
@@ -193,8 +192,7 @@ def ekstrak_bagian(dokumen):
         elif "Tabel" in text or "Gambar" in text:
             continue
         else:
-            # Penjelasan: Jika bagian yang sedang diambil adalah bagian yang memiliki list,
-            # maka list tersebut akan diambil sebagai satu item dalam list
+            #Jika bagian yang sedang diambil adalah bagian yang memiliki list, maka list tersebut akan diambil sebagai satu item dalam list
             if section_flags["dalam_pendahuluan"]:
                 if para.style.name.startswith("List"):
                     current_list_pendahuluan.append(text)
@@ -240,8 +238,7 @@ def ekstrak_bagian(dokumen):
                 if current_section:
                     bagian[current_section].append(text)
 
-    # Penjelasan: Bagian ini digunakan untuk menambahkan list yang belum terakomodasi
-    # ke dalam bagian yang sesuai sebelum dijadikan satu string
+    #Bagian ini digunakan untuk menambahkan list yang belum terakomodasi ke dalam bagian yang sesuai sebelum dijadikan satu string
     if current_list_pendahuluan:
         bagian["Pendahuluan"].append(current_list_pendahuluan)
     if current_list_metode_penelitian:
@@ -253,18 +250,18 @@ def ekstrak_bagian(dokumen):
     if current_list_referensi:
         bagian["Referensi"].append(current_list_referensi)
 
-    # Memeriksa apakah ada bagian yang kosong
-    #for key, value in bagian.items():
-    #    if not value:
-    #        return f"Bagian {key} tidak ditemukan."
+    #Memeriksa apakah ada bagian yang kosong
+    for key, value in bagian.items():
+        if not value:
+            return f"Bagian {key} tidak ditemukan."
 
     return bagian
 
-# Penjelasan: Fungsi ini digunakan untuk mengganti bagian yang ada di template dan menyesuaikan dengan format jurnal
+#Fungsi ini digunakan untuk mengganti bagian yang ada di template dan menyesuaikan dengan format jurnal
 def sesuaikan_dengan_template(dokumen_template, bagian):
     for para in dokumen_template.paragraphs:
-        # Penjelasan: Bagian ini digunakan untuk mengganti bagian yang ada di template sesuai dengan bagian yang ada di dokumen
-        # dengan menggunakan kata kunci yang ada di dokumen, di sertai format penulisannya sesuai dengan format jurnal
+
+        #Bagian ini digunakan untuk mengganti bagian yang ada di template sesuai dengan bagian yang ada di dokumen dengan menggunakan kata kunci yang ada di dokumen, di sertai format penulisannya sesuai dengan format jurnal
         if "JUD1" in para.text:
             para.clear()
             judul = bagian.get('Judul', 'Judul Tidak Ditemukan').upper() 
@@ -520,7 +517,7 @@ def upload_file():
         
         return jsonify({"message": "File uploaded and processed successfully", "download_url": f"/download/{filename}"}), 200
 
-# Penjelasa: Fungsi ini digunakan untuk mendownload file jurnal yang telah dihasilkan
+#Fungsi ini digunakan untuk mendownload file jurnal yang telah dihasilkan
 @app.route('/download/<filename>', methods=['GET'])
 def download_file(filename):
     processed_path = os.path.join(PROCESSED_FOLDER, f"processed_{filename}")
