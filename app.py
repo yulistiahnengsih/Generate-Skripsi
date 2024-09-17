@@ -251,9 +251,9 @@ def ekstrak_bagian(dokumen):
         bagian["Referensi"].append(current_list_referensi)
 
     #Memeriksa apakah ada bagian yang kosong
-    for key, value in bagian.items():
-        if not value:
-            return f"Bagian {key} tidak ditemukan."
+    #for key, value in bagian.items():
+    #    if not value:
+    #        return f"Bagian {key} tidak ditemukan."
 
     return bagian
 
